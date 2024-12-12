@@ -43,9 +43,9 @@ function rocket_model_hersim(nh)
         def_ref_v[i=1:nh-1], v[i,1] == 0.5 * (v[i,0] + v[i+1,0]) + 0.125 * step * (dv[i,0] - dv[i+1,0])
         def_ref_m[i=1:nh-1], m[i,1] == 0.5 * (m[i,0] + m[i+1,0]) + 0.125 * step * (dm[i,0] - dm[i+1,0])
 
-        con_dh[i=1:nh], h[i,0] == h[i-1,0] + 1/6 * step * (dh[i-1,0] + dh[i,0] + 4 * dh[i,1])
-        con_dv[i=1:nh], v[i,0] == v[i-1,0] + 1/6 * step * (dv[i-1,0] + dv[i,0] + 4 * dv[i,1])
-        con_dm[i=1:nh], m[i,0] == m[i-1,0] + 1/6 * step * (dm[i-1,0] + dm[i,0] + 4 * dm[i,1])
+        con_dh[i=1:nh], h[i+1,0] == h[i,0] + 1/6 * step * (dh[i,0] + dh[i+1,0] + 4 * dh[i,1])
+        con_dv[i=1:nh], v[i+1,0] == v[i,0] + 1/6 * step * (dv[i,0] + dv[i+1,0] + 4 * dv[i,1])
+        con_dm[i=1:nh], m[i+1,0] == m[i,0] + 1/6 * step * (dm[i,0] + dm[i+1,0] + 4 * dm[i,1])
     end)
     
     #Boundary constraints
