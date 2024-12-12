@@ -24,7 +24,7 @@ function rocket_model_hersim(nh)
         1.0 <= h[i=0:nh,j=0:1],          (start=1.0)
         0.0 <= v[i=0:nh,j=0:1],          (start=i/nh*(1.0 - i/nh))
         m_f <= m[i=0:nh,j=0:1] <= m_0,   (start=(m_f - m_0)*(i/nh) + m_0)
-        0.0 <= T[i=0:nh] <= T_max, (start=T_max/2.0)
+        0.0 <= T[i=0:nh,j=0:1] <= T_max, (start=T_max/2.0)
         0.0 <= step,               (start=1/nh)
     end)
 
@@ -32,8 +32,8 @@ function rocket_model_hersim(nh)
         D[i=0:nh,j=0:1],  D_c*v[i,j]^2*exp(-h_c*(h[i,j] - h_0))/h_0
         g[i=0:nh,j=0:1],  g_0 * (h_0 / h[i,j])^2
         dh[i=0:nh,j=0:1], v[i,j]
-        dv[i=0:nh,j=0:1], (T[i] - D[i,j] - m[i,j]*g[i,j]) / m[i,j]
-        dm[i=0:nh,j=0:1], -T[i]/c
+        dv[i=0:nh,j=0:1], (T[i,j] - D[i,j] - m[i,j]*g[i,j]) / m[i,j]
+        dm[i=0:nh,j=0:1], -T[i,j]/c
     end)
 
     @objective(model, Max, h[nh,0])
@@ -43,11 +43,10 @@ function rocket_model_hersim(nh)
         def_ref_v[i=1:nh-1], v[i,1] == 0.5 * (v[i,0] + v[i+1,0]) + 0.125 * step * (dv[i,0] - dv[i+1,0])
         def_ref_m[i=1:nh-1], m[i,1] == 0.5 * (m[i,0] + m[i+1,0]) + 0.125 * step * (dm[i,0] - dm[i+1,0])
 
-        con_dh[i=1:nh], h[i+1,0] == h[i,0] + 1/6 * step * (dh[i,0] + dh[i+1,0] + 4 * dh[i,1])
-        con_dv[i=1:nh], v[i+1,0] == v[i,0] + 1/6 * step * (dv[i,0] + dv[i+1,0] + 4 * dv[i,1])
-        con_dm[i=1:nh], m[i+1,0] == m[i,0] + 1/6 * step * (dm[i,0] + dm[i+1,0] + 4 * dm[i,1])
+        con_dh[i=1:nh], h[i,0] == h[i-1,0] + 1/6 * step * (dh[i-1,0] + dh[i,0] + 4 * dh[i-1,1])
+        con_dv[i=1:nh], v[i,0] == v[i-1,0] + 1/6 * step * (dv[i-1,0] + dv[i,0] + 4 * dv[i-1,1])
+        con_dm[i=1:nh], m[i,0] == m[i-1,0] + 1/6 * step * (dm[i-1,0] + dm[i,0] + 4 * dm[i-1,1])
     end)
-    
     #Boundary constraints
     @constraints(model, begin
         h_ic, h[0,0] == h_0
@@ -72,19 +71,22 @@ function Generate_thrust_hersim(nhs=nhs)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
         JuMP.optimize!(model)
         T_value = value.(model[:T]);
-        print(T_value)
         T_Array = Array(T_value[:,0]);
-#        T_Array_dua = Array(T_value[:,1]);
+        T_Array_dua = Array(T_value[:,1]);
         Thrusts[1][i] = T_Array
-#        Thrusts[2][i] = T_Array_dua
+        Thrusts[2][i] = T_Array_dua
         Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="T values for nh = $nh")
     end
     Plots.display(P)
     return Thrusts
 end
 
-MModel = rocket_model_hersim(100)
-JuMP.set_optimizer(MModel, Ipopt.Optimizer)
-JuMP.optimize!(MModel)
-T_value = value.(MModel[:T]);
-print(T_value)
+model = rocket_model_hersim(100)
+JuMP.set_optimizer(model, Ipopt.Optimizer)
+JuMP.set_attribute(model,"max_iter",100)
+JuMP.optimize!(model)
+T_value = value.(model[:T]);
+T_Array = Array(T_value[:,0]);
+T_Array_dua = Array(T_value[:,1]);
+
+# Generate_thrust_hersim([10])
