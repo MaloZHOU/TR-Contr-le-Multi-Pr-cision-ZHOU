@@ -3,7 +3,6 @@ using JuMP
 using Ipopt
 #using COPSBenchmark
 import Plots
-nhs = [100,500,1000,5000,10000] 
 # Goddard Rocket Problem
 # Trapezoidal formulation
 function rocket_model(nh)
@@ -77,10 +76,12 @@ function Generate_thrust(nhs=nhs)
     return P
 end
 
-function main(nhs = nhs)
-    Plot_Thrust = Generate_thrust(nhs)
-    Plots.display(Plot_Thrust)
-    readline()
-end
+# nhs = [100,500,1000,5000,10000] 
 
-main()
+# function main(nhs = nhs)
+#     Plot_Thrust = Generate_thrust(nhs)
+#     Plots.display(Plot_Thrust)
+#     readline()
+# end
+
+# main()

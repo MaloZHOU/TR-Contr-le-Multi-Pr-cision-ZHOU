@@ -80,13 +80,3 @@ function Generate_thrust_hersim(nhs=nhs)
     Plots.display(P)
     return Thrusts
 end
-
-model = rocket_model_hersim(100)
-JuMP.set_optimizer(model, Ipopt.Optimizer)
-JuMP.set_attribute(model,"max_iter",100)
-JuMP.optimize!(model)
-T_value = value.(model[:T]);
-T_Array = Array(T_value[:,0]);
-T_Array_dua = Array(T_value[:,1]);
-
-# Generate_thrust_hersim([10])
