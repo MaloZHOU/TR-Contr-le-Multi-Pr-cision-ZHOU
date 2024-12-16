@@ -20,7 +20,7 @@ function Compa_nh_tol(nh,tol)
 end
 
 nhs = [100,1000,5000,10000]
-tols = [1e-8,1e-10,1e-12]
+tols = [1e-6,1e-7,1e-9]
 for nh in nhs
     for tol in tols
         p = Compa_nh_tol(nh,tol)
