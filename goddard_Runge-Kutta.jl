@@ -41,24 +41,24 @@ function rocket_model_Runge(nh)
     #Runge-Kutta Method
     @constraints(model,begin
     #x1 = x0 + 0.5 * k1, x in {h,v,m}:
-        def_h1[i=1:nh], h[i,1] == 0.5 * step * dh[i,0] + h[i,0]
-        def_v1[i=1:nh], v[i,1] == 0.5 * step * dv[i,0] + v[i,0]
-        def_m1[i=1:nh], m[i,1] == 0.5 * step * dm[i,0] + m[i,0]
+        def_h1[i=0:nh], h[i,1] == 0.5 * step * dh[i,0] + h[i,0]
+        def_v1[i=0:nh], v[i,1] == 0.5 * step * dv[i,0] + v[i,0]
+        def_m1[i=0:nh], m[i,1] == 0.5 * step * dm[i,0] + m[i,0]
 
     #x2 = x0 + 0.5 * k2, x in {h,v,m}:
-        def_h2[i=1:nh], h[i,2] == 0.5 * step * dh[i,1] + h[i,0]
-        con_v2[i=1:nh], v[i,2] == 0.5 * step * dv[i,1] + v[i,0]
-        con_m2[i=1:nh], m[i,2] == 0.5 * step * dm[i,1] + m[i,0]
+        def_h2[i=0:nh], h[i,2] == 0.5 * step * dh[i,1] + h[i,0]
+        con_v2[i=0:nh], v[i,2] == 0.5 * step * dv[i,1] + v[i,0]
+        con_m2[i=0:nh], m[i,2] == 0.5 * step * dm[i,1] + m[i,0]
 
     #x3 = x0 + k3, x in {h,v,m}:
-        def_h3[i=1:nh], h[i,3] == step * dh[i,2] + h[i,0]
-        con_v3[i=1:nh], v[i,3] == step * dv[i,2] + v[i,0]
-        con_m3[i=1:nh], m[i,3] == step * dm[i,2] + m[i,0]       
+        def_h3[i=0:nh], h[i,3] == step * dh[i,2] + h[i,0]
+        con_v3[i=0:nh], v[i,3] == step * dv[i,2] + v[i,0]
+        con_m3[i=0:nh], m[i,3] == step * dm[i,2] + m[i,0]       
 
     #x4 = k4
-        def_h4[i=1:nh], h[i,4] == step * dh[i,3]
-        con_v4[i=1:nh], v[i,4] == step * dv[i,3]
-        con_m4[i=1:nh], m[i,4] == step * dm[i,3]
+        def_h4[i=0:nh], h[i,4] == step * dh[i,3]
+        con_v4[i=0:nh], v[i,4] == step * dv[i,3]
+        con_m4[i=0:nh], m[i,4] == step * dm[i,3]
 
     #x0[i+1] = x0[i] + (1 / 6) * (k1 + 2*k2 + 2*k3 + k4)
         runge_kutta_h[i=0:nh-1], h[i+1,0] == h[i,0] + (1/6) * ( 2 * (h[i,1]-h[i,0]) + 4 * (h[i,2]-h[i,0]) + 2 * (h[i,3]-h[i,0]) +h[i,4])
@@ -68,9 +68,9 @@ function rocket_model_Runge(nh)
     
     #Boundary constraints
     @constraints(model, begin
-        h_ic[j=0:4], h[0,j] == h_0
-        v_ic[j=0:4], v[0,j] == v_0
-        m_ic[j=0:4], m[0,j] == m_0
+        h_ic, h[0,0] == h_0
+        v_ic, v[0,0] == v_0
+        m_ic, m[0,0] == m_0
         m_fc, m[nh,0] == m_f
     end)
 
@@ -94,7 +94,7 @@ function Generate_thrust_Runge(nhs=nhs)
     return Thrusts
 end
 
-nh = 50
+nh = 100
 MModel = rocket_model_Runge(nh)
 JuMP.set_optimizer(MModel, Ipopt.Optimizer)
 JuMP.optimize!(MModel)
