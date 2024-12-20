@@ -1,10 +1,14 @@
-
 using JuMP
 using Ipopt
 #using COPSBenchmark
 import Plots
+using HSL_jll
+
 # Goddard Rocket Problem
 # Trapezoidal formulation
+# Three hyperparameters to be checked before every run: 1) objective to optimize, at line 44,45; 2) tolerance applied to the model, at line 74
+# 3) number of discritization nh, at line 89
+
 function rocket_model(nh)
     h_0 = 1.0
     v_0 = 0.0
@@ -24,7 +28,7 @@ function rocket_model(nh)
 
     @variables(model, begin
         1.0 <= h[i=0:nh],          (start=1.0)
-        0.0 <= v[i=0:nh],          (start=i/nh*(1.0 - i/nh))
+        0.0 <= v[i=0:nh] <= Inf,   (start=i/nh*(1.0 - i/nh))
         m_f <= m[i=0:nh] <= m_0,   (start=(m_f - m_0)*(i/nh) + m_0)
         0.0 <= T[i=0:nh] <= T_max, (start=T_max/2.0)
         0.0 <= step,               (start=1/nh)
@@ -38,8 +42,10 @@ function rocket_model(nh)
         dm[i=0:nh], -T[i]/c
     end)
 
-    @objective(model, Max, h[nh])
-
+    #Set Objective
+    #@objective(model, Max, h[nh])
+    @objective(model, Max, h[nh] + 1e-8 * sum(T[i]^2 for i in 0:nh))
+    
     # Dynamics
     @constraints(model, begin
         con_dh[i=1:nh], h[i] == h[i-1] + 0.5 * step * (dh[i] + dh[i-1])
@@ -66,6 +72,9 @@ function Generate_thrust(nhs=nhs)
         nh = nhs[i]
         model = rocket_model(nh)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
+        JuMP.set_attribute(model,"tol",1e-8)
+        JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
+        JuMP.set_attribute(model, "linear_solver", "ma57")
         JuMP.optimize!(model)
         T_value = value.(model[:T]);
         T_Array = Array(T_value);
@@ -76,12 +85,7 @@ function Generate_thrust(nhs=nhs)
     return P
 end
 
-# nhs = [100,500,1000,5000,10000] 
 
-# function main(nhs = nhs)
-#     Plot_Thrust = Generate_thrust(nhs)
-#     Plots.display(Plot_Thrust)
-#     readline()
-# end
-
-# main()
+P = Generate_thrust([1000,5000,10000,12000])
+Plots.display(P)
+Plots.savefig("Nouvel_obj_trapèze_tol=1e-8.png")
