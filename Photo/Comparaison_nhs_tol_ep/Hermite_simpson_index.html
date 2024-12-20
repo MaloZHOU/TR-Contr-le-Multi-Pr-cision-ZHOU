@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de plottings, Hermite_simpson</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        img {
+            width: 400px;
+            height: 300px;
+            margin-top: 20px;
+        }
+        label {
+            cursor: pointer;
+        }
+        #currentSelection {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Figure générée par paramètres sélectionné en appliquant Hermite_simpson</h1>
+    <p> Choix de <strong>epsilon</strong> et <strong>tolérance</strong> :</p>
+    
+    <!-- 参数表格 -->
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>tol=1.0e-6</th>
+                <th>tol=1.0e-7</th>
+                <th>tol=1.0e-8</th>
+                <th>tol=1.0e-10</th>
+                <th>tol=1.0e-12</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- epsilon 行 -->
+            <tr>
+                <th>epsilon=1.0e-5</th>
+                <td><input type="radio" name="parameter" id="e5t6" value="1.0e-5,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-5')"><label for="e5t6"></label></td>
+                <td><input type="radio" name="parameter" id="e5t7" value="1.0e-5,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-5')"><label for="e5t7"></label></td>
+                <td><input type="radio" name="parameter" id="e5t8" value="1.0e-5,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-5')"><label for="e5t8"></label></td>
+                <td><input type="radio" name="parameter" id="e5t10" value="1.0e-5,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-5')"><label for="e5t10"></label></td>
+                <td><input type="radio" name="parameter" id="e5t12" value="1.0e-5,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-5')"><label for="e5t12"></label></td>
+            </tr>
+            <tr>
+                <th>epsilon=1.0e-6</th>
+                <td><input type="radio" name="parameter" id="e6t6" value="1.0e-6,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-6')"><label for="e6t6"></label></td>
+                <td><input type="radio" name="parameter" id="e6t7" value="1.0e-6,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-6')"><label for="e6t7"></label></td>
+                <td><input type="radio" name="parameter" id="e6t8" value="1.0e-6,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-6')"><label for="e6t8"></label></td>
+                <td><input type="radio" name="parameter" id="e6t10" value="1.0e-6,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-6')"><label for="e6t10"></label></td>
+                <td><input type="radio" name="parameter" id="e6t12" value="1.0e-6,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-6')"><label for="e6t12"></label></td>
+            </tr>
+            <tr>
+                <th>epsilon=1.0e-7</th>
+                <td><input type="radio" name="parameter" id="e7t6" value="1.0e-6,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-7')"><label for="e7t6"></label></td>
+                <td><input type="radio" name="parameter" id="e7t7" value="1.0e-6,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-7')"><label for="e7t7"></label></td>
+                <td><input type="radio" name="parameter" id="e7t8" value="1.0e-6,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-7')"><label for="e7t8"></label></td>
+                <td><input type="radio" name="parameter" id="e7t10" value="1.0e-6,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-7')"><label for="e7t10"></label></td>
+                <td><input type="radio" name="parameter" id="e7t12" value="1.0e-6,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-7')"><label for="e7t12"></label></td>
+            </tr>
+            <tr>
+                <th>epsilon=1.0e-8</th>
+                <td><input type="radio" name="parameter" id="e8t6" value="1.0e-6,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-8')"><label for="e8t6"></label></td>
+                <td><input type="radio" name="parameter" id="e8t7" value="1.0e-6,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-8')"><label for="e8t7"></label></td>
+                <td><input type="radio" name="parameter" id="e8t8" value="1.0e-6,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-8')"><label for="e8t8"></label></td>
+                <td><input type="radio" name="parameter" id="e8t10" value="1.0e-6,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-8')"><label for="e8t10"></label></td>
+                <td><input type="radio" name="parameter" id="e8t12" value="1.0e-6,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-8')"><label for="e8t12"></label></td>
+            </tr>
+            <tr>
+                <th>epsilon=1.0e-9</th>
+                <td><input type="radio" name="parameter" id="e9t6" value="1.0e-6,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-9')"><label for="e9t6"></label></td>
+                <td><input type="radio" name="parameter" id="e9t7" value="1.0e-6,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-9')"><label for="e9t7"></label></td>
+                <td><input type="radio" name="parameter" id="e9t8" value="1.0e-6,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-9')"><label for="e9t8"></label></td>
+                <td><input type="radio" name="parameter" id="e9t10" value="1.0e-6,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-9')"><label for="e9t10"></label></td>
+                <td><input type="radio" name="parameter" id="e9t12" value="1.0e-6,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-9')"><label for="e9t12"></label></td>
+            </tr>
+            <tr>
+                <th>epsilon=1.0e-10</th>
+                <td><input type="radio" name="parameter" id="e10t6" value="1.0e-6,1.0e-6" onclick="updateImage('1.0e-6', '1.0e-10')"><label for="e10t6"></label></td>
+                <td><input type="radio" name="parameter" id="e10t7" value="1.0e-6,1.0e-7" onclick="updateImage('1.0e-7', '1.0e-10')"><label for="e10t7"></label></td>
+                <td><input type="radio" name="parameter" id="e10t8" value="1.0e-6,1.0e-8" onclick="updateImage('1.0e-8', '1.0e-10')"><label for="e10t8"></label></td>
+                <td><input type="radio" name="parameter" id="e10t10" value="1.0e-6,1.0e-10" onclick="updateImage('1.0e-10', '1.0e-10')"><label for="e10t10"></label></td>
+                <td><input type="radio" name="parameter" id="e10t12" value="1.0e-6,1.0e-12" onclick="updateImage('1.0e-12', '1.0e-10')"><label for="e10t12"></label></td>
+            </tr>
+            <!-- 可以继续添加更多 epsilon 的行 -->
+        </tbody>
+    </table>
+
+    <!-- 当前展示 -->
+    <div id="currentSelection"> Paramètres actuels <span id="currentParams"></span></div>
+
+    <!-- 图片展示 -->
+    <div>
+        <img id="displayImage" src="Hermite_simpson,tol = 1.0e-6, epsilon = 1.0e-5.png" alt="Selected Image">
+    </div>
+
+    <script>
+        function updateImage(tol, epsilon) {
+            const image = document.getElementById('displayImage');
+            const currentParams = document.getElementById('currentParams');
+            
+            // 更新图片
+            imagePath = `Hermite_simpson,tol = ${tol}, epsilon = ${epsilon}.png`;
+            image.src = imagePath;
+
+            // 更新参数展示
+            currentParams.textContent = `tol=${tol}, epsilon=${epsilon}`;
+        }
+    </script>
+</body>
+</html>
