@@ -1,0 +1,54 @@
+Please submit a bug report with steps to reproduce this fault, and any error messages that follow (in their entirety). Thanks.
+Exception: EXCEPTION_ACCESS_VIOLATION at 0x5ef3e5b -- ma57od_ at C:\Users\zsxxz\Desktop\SJTU\code\JuliaCode\Lib\HSL_jll.jl.v2024.11.28\HSL_jll.jl.v2024.11.28\override\bin\x86_64-w64-mingw32-libgfortran5\libhsl.dll (unknown line)
+in expression starting at C:\Users\zsxxz\Desktop\SJTU\code\JuliaCode\controle\TR-Contr-le-Multi-Pr-cision-ZHOU\goddard.jl:85
+ma57od_ at C:\Users\zsxxz\Desktop\SJTU\code\JuliaCode\Lib\HSL_jll.jl.v2024.11.28\HSL_jll.jl.v2024.11.28\override\bin\x86_64-w64-mingw32-libgfortran5\libhsl.dll (unknown line)
+ma57bd_ at C:\Users\zsxxz\Desktop\SJTU\code\JuliaCode\Lib\HSL_jll.jl.v2024.11.28\HSL_jll.jl.v2024.11.28\override\bin\x86_64-w64-mingw32-libgfortran5\libhsl.dll (unknown line)
+_ZN5Ipopt20Ma57TSolverInterface10MultiSolveEbPKiS2_iPdbi at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt16TSymLinearSolver10MultiSolveERKNS_9SymMatrixERSt6vectorINS_8SmartPtrIKNS_6VectorEEESaIS8_EERS4_INS5_IS6_EESaISC_EEbi at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt18StdAugSystemSolver10MultiSolveEPKNS_9SymMatrixEdPKNS_6VectorEdS6_dPKNS_6MatrixES6_dS9_S6_dRSt6vectorINS_8SmartPtrIS5_EESaISC_EESF_SF_SF_RSA_INSB_IS4_EESaISG_EESJ_SJ_SJ_bi at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt15AugSystemSolver5SolveEPKNS_9SymMatrixEdPKNS_6VectorEdS6_dPKNS_6MatrixES6_dS9_S6_dRS5_SA_SA_SA_RS4_SB_SB_SB_bi at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt17PDFullSpaceSolver9SolveOnceEbbRKNS_9SymMatrixERKNS_6MatrixES6_S6_S6_S6_S6_RKNS_6VectorES9_S9_S9_S9_S9_S9_S9_S9_S9_ddRKNS_14IteratesVectorERSA_ at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt17PDFullSpaceSolver5SolveEddRKNS_14IteratesVectorERS1_bb at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt21PDSearchDirCalculator22ComputeSearchDirectionEv at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt14IpoptAlgorithm22ComputeSearchDirectionEv at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt14IpoptAlgorithm8OptimizeEb at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt16IpoptApplication13call_optimizeEv at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt16IpoptApplication11OptimizeNLPERKNS_8SmartPtrINS_3NLPEEERNS1_INS_16AlgorithmBuilderEEE at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt16IpoptApplication11OptimizeNLPERKNS_8SmartPtrINS_3NLPEEE at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+_ZN5Ipopt16IpoptApplication12OptimizeTNLPERKNS_8SmartPtrINS_4TNLPEEE at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+IpoptSolve at C:\Users\zsxxz\.julia\artifacts\c3111327160f18597d6111df36d6668dfc0cad71\bin\libipopt-3.dll (unknown line)
+IpoptSolve at C:\Users\zsxxz\.julia\packages\Ipopt\P3B1q\src\C_wrapper.jl:399 [inlined]
+optimize! at C:\Users\zsxxz\.julia\packages\Ipopt\P3B1q\src\MOI_wrapper.jl:1124
+optimize! at C:\Users\zsxxz\.julia\packages\MathOptInterface\gLl4d\src\Bridges\bridge_optimizer.jl:367 [inlined]
+optimize! at C:\Users\zsxxz\.julia\packages\MathOptInterface\gLl4d\src\MathOptInterface.jl:122 [inlined]
+optimize! at C:\Users\zsxxz\.julia\packages\MathOptInterface\gLl4d\src\Utilities\cachingoptimizer.jl:321
+jfptr_optimizeNOT._7588 at C:\Users\zsxxz\.julia\compiled\v1.11\Ipopt\yMQMo_wJQdH_1.dll (unknown line)
+#optimize!#108 at C:\Users\zsxxz\.julia\packages\JuMP\i68GU\src\optimizer_interface.jl:595
+optimize! at C:\Users\zsxxz\.julia\packages\JuMP\i68GU\src\optimizer_interface.jl:546 [inlined]
+Generate_thrust at C:\Users\zsxxz\Desktop\SJTU\code\JuliaCode\controle\TR-Contr-le-Multi-Pr-cision-ZHOU\goddard.jl:74
+unknown function (ip: 000002d9799648db)
+jl_apply at C:/workdir/src\julia.h:2157 [inlined]
+do_call at C:/workdir/src\interpreter.c:126
+eval_value at C:/workdir/src\interpreter.c:223
+eval_stmt_value at C:/workdir/src\interpreter.c:174 [inlined]
+eval_body at C:/workdir/src\interpreter.c:681
+jl_interpret_toplevel_thunk at C:/workdir/src\interpreter.c:821
+jl_toplevel_eval_flex at C:/workdir/src\toplevel.c:943
+jl_toplevel_eval_flex at C:/workdir/src\toplevel.c:886
+ijl_toplevel_eval at C:/workdir/src\toplevel.c:952 [inlined]
+ijl_toplevel_eval_in at C:/workdir/src\toplevel.c:994
+eval at .\boot.jl:430 [inlined]
+include_string at .\loading.jl:2643
+_include at .\loading.jl:2703
+include at .\Base.jl:557
+jfptr_include_47870.1 at C:\Users\zsxxz\.julia\juliaup\julia-1.11.1+0.x64.w64.mingw32\lib\julia\sys.dll (unknown line)
+exec_options at .\client.jl:323
+_start at .\client.jl:531
+jfptr__start_73819.1 at C:\Users\zsxxz\.julia\juliaup\julia-1.11.1+0.x64.w64.mingw32\lib\julia\sys.dll (unknown line)
+jl_apply at C:/workdir/src\julia.h:2157 [inlined]
+true_main at C:/workdir/src\jlapi.c:900
+jl_repl_entrypoint at C:/workdir/src\jlapi.c:1059
+mainCRTStartup at C:/workdir/cli\loader_exe.c:58
+BaseThreadInitThunk at C:\Windows\System32\KERNEL32.DLL (unknown line)
+RtlUserThreadStart at C:\Windows\SYSTEM32\ntdll.dll (unknown line)
+Allocations: 76732862 (Pool: 76732231; Big: 631); GC: 27
