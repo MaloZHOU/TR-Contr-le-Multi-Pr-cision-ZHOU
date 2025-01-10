@@ -44,7 +44,7 @@ function rocket_model_hersim(nh)
     
     #Set Objective
     # @objective(model, Max, h[nh,0])
-    @objective(model, Max, h[nh,0] + 1e-10 * sum(T[i,0]^2 for i in 0:nh))
+    @objective(model, Max, h[nh,0])
     
     #Hermite-Simpson Method
     @constraints(model,begin
@@ -76,6 +76,7 @@ function Generate_thrust_hersim(nhs=nhs)
     Thrusts = [[[] for i in range(1,length(nhs))] for j in range(1,2)]
     for i in range(1,length(nhs))
         nh = nhs[i]
+        println(nh)
         model = rocket_model_hersim(nh)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
         JuMP.set_attribute(model,"tol",1e-8)
@@ -93,7 +94,15 @@ function Generate_thrust_hersim(nhs=nhs)
     return P
 end
 
-P = Generate_thrust_hersim([50,75,100,200,300,500,1000])
-Plots.display(P)
-Plots.savefig("Nouvel_obj_Hermite_Simpson_tol=1e-8.png")
-println("figure saved")
+function uni_plot(Ls,names)
+    p = Plots.plot()
+    for j in range(1,length(Ls))
+        Data = [ (i-minimum(Ls[j]))/(maximum(Ls[j])-minimum(Ls[j])) for i in Ls[j]]
+        p = Plots.plot!(LinRange(0,1,length(Data)),Data,label =names[j])
+    end
+    return p
+end
+
+nhs = [100,500,1000,5000,10000]
+Generate_thrust_hersim(nhs)
+
