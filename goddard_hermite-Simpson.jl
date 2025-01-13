@@ -103,6 +103,6 @@ function uni_plot(Ls,names)
     return p
 end
 
-nhs = [100,500,1000,5000,10000]
-Generate_thrust_hersim(nhs)
+# nhs = [100,500,1000,5000,10000]
+# Generate_thrust_hersim(nhs)
 

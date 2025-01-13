@@ -86,6 +86,6 @@ function Generate_thrust(nhs=nhs)
 end
 
 
-P = Generate_thrust([1000,5000,10000,12000])
-Plots.display(P)
-Plots.savefig("Nouvel_obj_trapèze_tol=1e-8.png")
+# P = Generate_thrust([1000,5000,10000,12000])
+# Plots.display(P)
+# Plots.savefig("Nouvel_obj_trapèze_tol=1e-8.png")
