@@ -47,9 +47,9 @@ function rocket_model_euler_exp(nh)
     
     #Hermite-Simpson Method
     @constraints(model,begin
-        euler_exp_h[i=0:nh-1], h[i+1] == h[i] + dh[i]
-        euler_exp_v[i=0:nh-1], v[i+1] == v[i] + dv[i]
-        euler_exp_m[i=0:nh-1], m[i+1] == m[i] + dm[i]
+        euler_exp_h[i=0:nh-1], h[i+1] == h[i] + step *dh[i]
+        euler_exp_v[i=0:nh-1], v[i+1] == v[i] + step *dv[i]
+        euler_exp_m[i=0:nh-1], m[i+1] == m[i] + step *dm[i]
     end)
     #Boundary constraints
     @constraints(model, begin
@@ -94,16 +94,16 @@ function rocket_model_euler_imp(nh)
         dv[i=0:nh], (T[i] - D[i] - m[i]*g[i]) / m[i]
         dm[i=0:nh], -T[i]/c
     end)
-    
+     
     #Set Objective
     # @objective(model, Max, h[nh,0])
     @objective(model, Max, h[nh])
     
     #Hermite-Simpson Method
     @constraints(model,begin
-        euler_exp_h[i=0:nh-1], h[i+1] == h[i] + dh[i+1]
-        euler_exp_v[i=0:nh-1], v[i+1] == v[i] + dv[i+1]
-        euler_exp_m[i=0:nh-1], m[i+1] == m[i] + dm[i+1]
+        euler_exp_h[i=0:nh-1], h[i+1] == h[i] + step * dh[i+1]
+        euler_exp_v[i=0:nh-1], v[i+1] == v[i] + step * dv[i+1]
+        euler_exp_m[i=0:nh-1], m[i+1] == m[i] + step * dm[i+1]
     end)
     #Boundary constraints
     @constraints(model, begin
@@ -153,7 +153,3 @@ function Generate_thrust_imp(nhs=nhs)
     Plots.display(P)
     return P
 end
-
-nhs = [50,100,200,500,1000]
-p = Generate_thrust_exp(nhs)
-Plots.savefig(p,"exp.png")
