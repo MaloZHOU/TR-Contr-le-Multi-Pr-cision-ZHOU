@@ -42,9 +42,23 @@ function rocket_model_hersim(nh)
         dm[i=0:nh,j=0:1], -T[i,j]/c
     end)
     
+    #weight of each dimension of parrameters and target residuals 
+    coef_obj = 0.7
+    wh = h_0
+    wv = wh/step
+    wm = m_0
+    sum_weight = wh+wv+wm
+    wh = (1-coef_obj) * wh/sum_weight
+    wv = (1-coef_obj) * wv/sum_weight
+    wm = (1-coef_obj) * wm/sum_weight
+    
+
     #Set Objective
     # @objective(model, Max, h[nh,0])
-    @objective(model, Max, h[nh,0])
+    # @objective(model, Max, h[nh,0])
+    @objective(model, Min, (coef_obj-1)*h[nh,0] +sum( wh * (h[i+1,0] - h[i,0]-step*dh[i,0]) 
+                                                    + wv * (v[i+1,0] - v[i,0]-step*dv[i,0]) 
+                                                    + wm * (m[i+1,0] - m[i,0]-step*dm[i,0]) for i in 0:nh-1))
     
     #Hermite-Simpson Method
     @constraints(model,begin

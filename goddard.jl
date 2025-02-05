@@ -7,8 +7,6 @@ using HSL_jll
 
 # Goddard Rocket Problem
 # Trapezoidal formulation
-# Three hyperparameters to be checked before every run: 1) objective to optimize, at line 44,45; 2) tolerance applied to the model, at line 74
-# 3) number of discritization nh, at line 89
 
 function rocket_model(nh)
     h_0 = 1.0
@@ -42,10 +40,6 @@ function rocket_model(nh)
         dv[i=0:nh], (T[i] - D[i] - m[i]*g[i]) / m[i]
         dm[i=0:nh], -T[i]/c
     end)
-
-    #Set Objective
-    @objective(model, Max, h[nh])
-    #@objective(model, Max, h[nh] + 1e-5 * sum(T[i]^2 for i in 0:nh))
     
     # Dynamics
     @constraints(model, begin
@@ -97,9 +91,23 @@ function rocket_model_act(nh)
         dv[i=0:nh], (T[i] - D[i] - m[i]*g[i]) / m[i]
         dm[i=0:nh], -T[i]/c
     end)
-
+    #weight of each dimension of parrameters and target residuals 
+    coef_obj = 0.9
+    wh = h_0
+    wv = wh/step
+    wm = m_0
+    sum_weight = wh+wv+wm
+    wh = (1-coef_obj) * wh/sum_weight
+    wv = (1-coef_obj) * wv/sum_weight
+    wm = (1-coef_obj) * wm/sum_weight
+    
     #Set Objective
-    @objective(model, Max, h[nh])
+    
+    #@objective(model, Max, h[nh])
+    @objective(model, Min,(coef_obj-1)*h[nh] +sum(wh * (h[i+1] - h[i]-step*dh[i]) 
+                                                    + wv * (v[i+1] - v[i]-step*dv[i]) 
+                                                    + wm * (m[i+1] - m[i]-step*dm[i]) for i in 0:nh-1))
+
     #@objective(model, Max, h[nh] + 1e-5 * sum(T[i]^2 for i in 0:nh))
     
     # Dynamics
