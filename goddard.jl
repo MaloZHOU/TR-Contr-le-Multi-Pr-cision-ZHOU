@@ -40,7 +40,8 @@ function rocket_model(nh)
         dv[i=0:nh], (T[i] - D[i] - m[i]*g[i]) / m[i]
         dm[i=0:nh], -T[i]/c
     end)
-    
+
+    @objective(model, Max, h[nh])
     # Dynamics
     @constraints(model, begin
         con_dh[i=1:nh], h[i] == h[i-1] + 0.5 * step * (dh[i] + dh[i-1])
@@ -59,7 +60,7 @@ function rocket_model(nh)
     return model
 end
 
-function rocket_model_act(nh)
+function rocket_model_res(nh,coef_obj = 1.0)
     h_0 = 1.0
     v_0 = 0.0
     m_0 = 1.0
@@ -92,7 +93,6 @@ function rocket_model_act(nh)
         dm[i=0:nh], -T[i]/c
     end)
     #weight of each dimension of parrameters and target residuals 
-    coef_obj = 0.9
     wh = h_0
     wv = wh/step
     wm = m_0
@@ -102,13 +102,10 @@ function rocket_model_act(nh)
     wm = (1-coef_obj) * wm/sum_weight
     
     #Set Objective
-    
-    #@objective(model, Max, h[nh])
-    @objective(model, Min,(coef_obj-1)*h[nh] +sum(wh * (h[i+1] - h[i]-step*dh[i]) 
-                                                    + wv * (v[i+1] - v[i]-step*dv[i]) 
-                                                    + wm * (m[i+1] - m[i]-step*dm[i]) for i in 0:nh-1))
-
-    #@objective(model, Max, h[nh] + 1e-5 * sum(T[i]^2 for i in 0:nh))
+    # @objective(model, Max, h[nh])
+    @objective(model, Min,(-coef_obj)*h[nh] +sum(wh * (h[i+1] - h[i]-step*dh[i])^2 
+                                                    + wv * (v[i+1] - v[i]-step*dv[i])^2 
+                                                    + wm * (m[i+1] - m[i]-step*dm[i])^2 for i in 0:nh-1))
     
     # Dynamics
     @constraints(model, begin
@@ -141,11 +138,11 @@ end
 # Solve problem with Ipopt
 function Generate_thrust(nhs=nhs)
     Thrusts = [[] for i in range(1,length(nhs))]
-    P = Plots.plot(xlabel="Temps", ylabel="Value")
+    P = Plots.plot(xlabel="Temps", ylabel="Value",title="Contrôles de Goddard calculés")
     for i in range(1,length(nhs))
         println(nhs[i])
         nh = nhs[i]
-        model = rocket_model_act(nh)
+        model = rocket_model(nh)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
         JuMP.set_attribute(model,"tol",1e-8)
         JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
@@ -154,12 +151,51 @@ function Generate_thrust(nhs=nhs)
         T_value = value.(model[:T]);
         T_Array = Array(T_value);
         Thrusts[i] = T_Array
-        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="T values for nh = $nh")
+        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="Propulsion avec nh = $nh")
     end
     print("Loop done")
     return P
 end
 
+function Generate_thrust_obj(nh,coef_objs)
+    Thrusts = [[] for i in range(1,length(coef_objs))]
+    P = Plots.plot(xlabel="Temps", ylabel="Value",title = "Poids variants, Trapezoidal,nh=$nh")
+    for i in range(1,length(coef_objs))
+        println(coef_objs[i])
+        coef_obj = coef_objs[i]
+        model = rocket_model_res(nh,coef_obj)
+        JuMP.set_optimizer(model, Ipopt.Optimizer)
+        # JuMP.set_attribute(model,"tol",1e-8)
+        JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
+        JuMP.set_attribute(model, "linear_solver", "ma57")
+        JuMP.optimize!(model)
+        T_value = value.(model[:T]);
+        T_Array = Array(T_value);
+        Thrusts[i] = T_Array
+        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="coef_obj=$coef_obj")
+    end
+    print("Loop done")
+    return P
+end
+
+function Generate_thrust_tols(nh,tols = tols)
+    P = Plots.plot(xlabel="Temps", ylabel="Value",title="Contrôles de Goddard calculés")
+    for i in range(1,length(tols))
+        println(tols[i])
+        tol = tols[i]
+        model = rocket_model(nh)
+        JuMP.set_optimizer(model, Ipopt.Optimizer)
+        JuMP.set_attribute(model,"tol",tol)
+        JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
+        JuMP.set_attribute(model, "linear_solver", "ma57")
+        JuMP.optimize!(model)
+        T_value = value.(model[:T]);
+        T_Array = Array(T_value);
+        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="Propulsion avec tolérance = $toli")
+    end
+    print("Loop done")
+    return P
+end
 
 # P = Generate_thrust([50,100,500,1000,2000])
 # Plots.display(P)

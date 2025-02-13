@@ -8,7 +8,7 @@ using HSL_jll
 # Explicite and implicite methode of Euler: 
 # dxn = f(xm) and dxn = f(xn+1)
 
-function rocket_model_euler_exp(nh)
+function rocket_model_euler_exp(nh,coef_obj = 1.0)
     h_0 = 1.0   #hauteur init
     v_0 = 0.0   #vitesse init
     m_0 = 1.0   #masse init
@@ -42,9 +42,22 @@ function rocket_model_euler_exp(nh)
     end)
     
     #Set Objective
-    # @objective(model, Max, h[nh,0])
     @objective(model, Max, h[nh])
+    #Set Objective
+    #weight of each dimension of parrameters and target residuals 
+    wh = h_0
+    wv = wh/step
+    wm = m_0
+    sum_weight = wh+wv+wm
+    wh = (1-coef_obj) * wh/sum_weight
+    wv = (1-coef_obj) * wv/sum_weight
+    wm = (1-coef_obj) * wm/sum_weight
     
+    #Set Objective
+    # @objective(model, Max, h[nh])
+    @objective(model, Min,(-coef_obj)*h[nh] +sum(wh * (h[i+1] - h[i]-step*dh[i])^2 
+                                                    + wv * (v[i+1] - v[i]-step*dv[i])^2 
+                                                    + wm * (m[i+1] - m[i]-step*dm[i])^2 for i in 0:nh-1))    
     #Hermite-Simpson Method
     @constraints(model,begin
         euler_exp_h[i=0:nh-1], h[i+1] == h[i] + step *dh[i]
@@ -62,7 +75,7 @@ function rocket_model_euler_exp(nh)
     return model
 end
 
-function rocket_model_euler_imp(nh)
+function rocket_model_euler_imp(nh,coef_obj = 1.0)
     h_0 = 1.0   #hauteur init
     v_0 = 0.0   #vitesse init
     m_0 = 1.0   #masse init
@@ -96,10 +109,22 @@ function rocket_model_euler_imp(nh)
     end)
      
     #Set Objective
-    # @objective(model, Max, h[nh,0])
-    @objective(model, Max, h[nh])
+    #weight of each dimension of parrameters and target residuals 
+    wh = h_0
+    wv = wh/step
+    wm = m_0
+    sum_weight = wh+wv+wm
+    wh = (1-coef_obj) * wh/sum_weight
+    wv = (1-coef_obj) * wv/sum_weight
+    wm = (1-coef_obj) * wm/sum_weight
     
-    #Hermite-Simpson Method
+    #Set Objective
+    # @objective(model, Max, h[nh])
+    @objective(model, Min,(-coef_obj)*h[nh] +sum(wh * (h[i+1] - h[i]-step*dh[i])^2 
+                                                    + wv * (v[i+1] - v[i]-step*dv[i])^2 
+                                                    + wm * (m[i+1] - m[i]-step*dm[i])^2 for i in 0:nh-1))
+    
+    
     @constraints(model,begin
         euler_exp_h[i=0:nh-1], h[i+1] == h[i] + step * dh[i+1]
         euler_exp_v[i=0:nh-1], v[i+1] == v[i] + step * dv[i+1]
@@ -123,7 +148,7 @@ function Generate_thrust_exp(nhs=nhs)
         println(nh)
         model = rocket_model_euler_exp(nh)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
-        JuMP.set_attribute(model,"tol",1e-9)
+        JuMP.set_attribute(model,"tol",1e-12)
         JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
         JuMP.set_attribute(model, "linear_solver", "ma57")
         JuMP.optimize!(model)
@@ -142,7 +167,7 @@ function Generate_thrust_imp(nhs=nhs)
         println(nh)
         model = rocket_model_euler_imp(nh)
         JuMP.set_optimizer(model, Ipopt.Optimizer)
-        JuMP.set_attribute(model,"tol",1e-9)
+#        JuMP.set_attribute(model,"tol",1e-6)
         JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
         JuMP.set_attribute(model, "linear_solver", "ma57")
         JuMP.optimize!(model)
@@ -153,3 +178,44 @@ function Generate_thrust_imp(nhs=nhs)
     Plots.display(P)
     return P
 end
+
+
+function Generate_thrust_exp_obj(nh,coefs)
+    P = Plots.plot(xlabel="Temps", ylabel="Value",title = "Poids variants, Euler exp,nh=$nh")
+    for i in range(1,length(coefs))
+        coef = coefs[i]
+        println(coef)
+        model = rocket_model_euler_exp(nh,coef)
+        JuMP.set_optimizer(model, Ipopt.Optimizer)
+        # JuMP.set_attribute(model,"tol",1e-9)
+        JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
+        JuMP.set_attribute(model, "linear_solver", "ma57")
+        JuMP.optimize!(model)
+        T_value = value.(model[:T]);
+        T_Array = Array(T_value[:]);
+        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="coef = $coef")
+    end
+    Plots.display(P)
+    return P
+end
+
+function Generate_thrust_imp_obj(nh,coefs)
+    P = Plots.plot(xlabel="Temps", ylabel="Value",title = "Poids variants, Euler imp,nh=$nh")
+    for i in range(1,length(coefs))
+        coef = coefs[i]
+        println(coef)
+        model = rocket_model_euler_imp(nh,coef)
+        JuMP.set_optimizer(model, Ipopt.Optimizer)
+        JuMP.set_attribute(model,"tol",1e-16)
+        JuMP.set_attribute(model, "hsllib", HSL_jll.libhsl_path)
+        JuMP.set_attribute(model, "linear_solver", "ma57")
+        JuMP.optimize!(model)
+        T_value = value.(model[:T]);
+        T_Array = Array(T_value[:]);
+        Plots.plot!(LinRange(0,0.2,length(T_Array)),T_Array,label="coef = $coef")
+    end
+    Plots.display(P)
+    return P
+end
+
+objs = [0,0.1,0.5,0.9,1]
