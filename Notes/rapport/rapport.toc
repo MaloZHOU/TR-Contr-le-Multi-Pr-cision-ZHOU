@@ -1,0 +1,20 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{3}{}%
+\contentsline {subsection}{\numberline {1.1}Goddard problem}{3}{}%
+\contentsline {subsection}{\numberline {1.2}Numerical solutions for nonlinear optimal control}{4}{}%
+\contentsline {subsection}{\numberline {1.3}Singular arcs in optimal control problems}{4}{}%
+\contentsline {section}{\numberline {2}Methods}{6}{}%
+\contentsline {subsection}{\numberline {2.1}Julia-based model of optimization}{6}{}%
+\contentsline {subsection}{\numberline {2.2}Realized schemes of discretisation}{6}{}%
+\contentsline {subsection}{\numberline {2.3}Parameters to finetune the model}{7}{}%
+\contentsline {section}{\numberline {3}Results and Discussion}{8}{}%
+\contentsline {subsection}{\numberline {3.1}Results of numerical solutions}{8}{}%
+\contentsline {subsection}{\numberline {3.2}Theoretical demonstration}{10}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}Case with $nh=3$}{10}{}%
+\contentsline {subsubsection}{\numberline {3.2.2}Generalization of the $nh$}{13}{}%
+\contentsline {subsubsection}{\numberline {3.2.3}Consistency in different schemes of discretisation}{13}{}%
+\contentsline {subsection}{\numberline {3.3}Improvements made by integrated residuals}{14}{}%
+\contentsline {section}{\numberline {4}Conclusion}{18}{}%
+\contentsline {subsection}{\numberline {4.1}High precision solution of Goddard problem}{18}{}%
+\contentsline {subsection}{\numberline {4.2}Summary of conducted works}{18}{}%
+\contentsline {subsection}{\numberline {4.3}Shortcomings in this research}{19}{}%
